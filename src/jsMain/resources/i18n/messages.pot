@@ -1,0 +1,61 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: \n"
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/app/App.kt:39
+msgid "Home"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/app/App.kt:22
+msgid "Index"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/app/App.kt:21
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/components/layout/InlineLogin.kt:18
+msgid "Login"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/components/layout/InlineLogin.kt:46
+msgid "Logout"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/pages/Login.kt:33
+msgid "Password"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/pages/Login.kt:28
+msgid "Please sign in"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/components/layout/InlineLogin.kt:34
+msgid "Profile"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/pages/Login.kt:36
+msgid "Remember me"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/components/layout/LayoutHeader.kt:43
+msgid "Search"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/pages/Login.kt:38
+msgid "Sign in"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/app/App.kt:15
+msgid "Tasta Blud"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/pages/Login.kt:30
+msgid "Username"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/controllers/AppController.kt:54
+msgid "Welcome %1!"
+msgstr ""
+
+#: src/jsMain/kotlin/com/github/tasta_blud/darkladyblog/client/controllers/AppController.kt:58
+msgid "Wrong password or no such user"
+msgstr ""
