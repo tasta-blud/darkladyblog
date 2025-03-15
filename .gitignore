@@ -1,0 +1,7 @@
+/.idea/
+/.kotlin/
+/.gradle/
+/build/
+/darkladyblog-common/build/
+/darkladyblog-client/build/
+/darkladyblog-server/build/
