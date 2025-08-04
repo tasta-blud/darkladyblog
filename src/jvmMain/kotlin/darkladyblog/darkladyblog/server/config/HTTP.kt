@@ -8,6 +8,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.application.log
+import io.ktor.server.application.pluginOrNull
 import io.ktor.server.http.content.staticResources
 import io.ktor.server.plugins.autohead.AutoHeadResponse
 import io.ktor.server.plugins.cachingheaders.CachingHeaders
@@ -25,16 +26,17 @@ import io.ktor.server.routing.routing
 import io.ktor.server.webjars.Webjars
 
 fun Application.configureHTTP() {
-    install(ContentNegotiation) {
-        json()
-    }
+    pluginOrNull(ContentNegotiation)
+        ?: install(ContentNegotiation) {
+            json()
+        }
     install(PartialContent) {
         maxRangeCount = 10
     }
     install(ConditionalHeaders)
     install(Compression)
     install(CachingHeaders) {
-        options { call, outgoingContent ->
+        options { _, outgoingContent ->
             when (outgoingContent.contentType?.withoutParameters()) {
                 ContentType.Text.CSS -> CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 24 * 60 * 60))
                 else -> null

@@ -1,7 +1,7 @@
 package darkladyblog.darkladyblog.client.services
 
 import darkladyblog.darkladyblog.client.util.raw
-import darkladyblog.darkladyblog.common.config.Config
+import darkladyblog.darkladyblog.common.config.DEBUG
 import darkladyblog.darkladyblog.common.log.log
 import dev.fritz2.core.joinClasses
 import dev.fritz2.core.type
@@ -93,5 +93,5 @@ object Alerts {
         }
 
     fun error(ex: Throwable): Unit =
-        error(if (Config.DEBUG) ex.stackTraceToString() else "", ex.message)
+        error(if (DEBUG) ex.stackTraceToString() else "", ex.message)
 }

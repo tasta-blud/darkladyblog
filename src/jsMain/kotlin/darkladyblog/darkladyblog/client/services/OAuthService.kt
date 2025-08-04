@@ -1,18 +1,14 @@
 package darkladyblog.darkladyblog.client.services
 
-import darkladyblog.darkladyblog.client.base.rest.AbstractHttpService
-import darkladyblog.darkladyblog.client.util.method
+import darkladyblog.darkladyblog.client.intercept.runWithToastAsync
 import darkladyblog.darkladyblog.common.config.OAuthClient
-import io.ktor.http.HttpMethod
+import darkladyblog.darkladyblog.common.controllers.IAuthController
+import darkladyblog.darkladyblog.common.model.Principal
+import dev.kilua.rpc.getService
 
-object OAuthService : AbstractHttpService("/auth") {
+object OAuthService {
+    private val authController: IAuthController = getService<IAuthController>()
 
-    suspend fun signIn(oAuth: OAuthClient): Unit? =
-        http.useToastHttp()
-            .request<Unit> { method(HttpMethod.Get).append(oAuth.url) }
-            .onSuccess {
-//                if (it == null) auth.clear()
-//                else auth.complete(Credentials(it.username, it.password))
-            }
-            .getOrNull()
+    suspend fun signIn(oAuth: OAuthClient): Result<Principal>? =
+        runWithToastAsync { authController.signIn(/*oAuth.url*/) }.getOrNull()
 }

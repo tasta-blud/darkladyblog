@@ -5,29 +5,32 @@ val KEY_DEVELOPMENT: String = "development"
 
 val CLIENT_PORT: Int = 3000
 val SERVER_URL: String = "http://localhost:8080"
-val ENDPOINTS: List<String> = listOf("/api", "/webjars", "/static")
+val ENDPOINTS: List<String> = listOf("/api", "/rpc", "/webjars", "/static")
 
 val MAIN_CLASS_NAME: String = "darkladyblog.darkladyblog.server.MainKt"
 
 val LANGUAGES_LIST: List<String> = listOf("en", "ru")
+
+val isDevelopment: Boolean = System.getenv("ORG_GRADLE_PROJECT_$KEY_DEVELOPMENT")?.toBoolean()
+    ?: project.ext.has(KEY_DEVELOPMENT)
 
 plugins {
     alias(libs.plugins.org.jetbrains.kotlin.multiplatform)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.serialization)
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.de.comahe.i18n4k)
+    alias(libs.plugins.dev.kilua.rpc)
 }
 
 repositories {
     mavenCentral()
     maven { url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-js-wrappers") }
 }
-
 kotlin {
     js {
         browser {
             commonWebpackConfig {
-                mode = if (project.ext.has(KEY_DEVELOPMENT))
+                mode = if (isDevelopment)
                     org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.DEVELOPMENT
                 else
                     org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode.PRODUCTION
@@ -52,7 +55,7 @@ kotlin {
         @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
         mainRun {
             mainClass = MAIN_CLASS_NAME
-            args(listOf(KEY_DEVELOPMENT, project.ext.has(KEY_DEVELOPMENT)))
+            args(listOf(KEY_DEVELOPMENT, isDevelopment))
         }
     }
 
@@ -94,6 +97,9 @@ kotlin {
                 api(libs.org.jetbrains.kotlin.wrappers.kotlin.css)
 
                 api(libs.io.ktor.ktor.http)
+
+//                implementation(libs.dev.kilua.kilua.rpc.ktor.ktor)
+                implementation(libs.dev.kilua.kilua.rpc.ktor.koin)
             }
         }
         commonTest {
@@ -237,14 +243,47 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 tasks.register<Copy>("copyJsToJvm") {
-    dependsOn("jsBrowserDistribution")
+    val webpackTask =
+        tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>(
+            if (isDevelopment) "jsBrowserDevelopmentWebpack" else "jsBrowserProductionWebpack"
+        )
+    dependsOn("jsBrowserDistribution", webpackTask)
+    from(webpackTask.map { it.mainOutputFile.get().asFile })
     from("${layout.buildDirectory.get()}/dist/js/productionExecutable")
     include("**")
     into("${layout.buildDirectory.get()}/processedResources/jvm/main/static")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
 tasks.named("jvmProcessResources") {
     dependsOn("copyJsToJvm")
+}
+
+tasks.named<Jar>("jvmJar") {
+    dependsOn(
+        "jvmMainClasses",
+        tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>(
+            if (isDevelopment) "jsBrowserDevelopmentWebpack" else "jsBrowserProductionWebpack"
+        )
+    )
+    manifest {
+        attributes("Main-Class" to MAIN_CLASS_NAME)
+    }
+    from(
+        configurations.getByName("jvmRuntimeClasspath").map {
+            if (it.isDirectory) it else zipTree(it)
+        },
+        kotlin.targets["jvm"].compilations.getByName("main").output.classesDirs
+    )
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register("stage") {
+    dependsOn(tasks.named("installDist"))
+}
+
+tasks.withType<JavaExec>().configureEach {
+    classpath(tasks.named<Jar>("jvmJar"))
 }
 
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {

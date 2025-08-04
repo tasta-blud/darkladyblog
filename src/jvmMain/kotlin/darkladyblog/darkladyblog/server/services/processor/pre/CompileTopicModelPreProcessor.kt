@@ -2,15 +2,11 @@ package darkladyblog.darkladyblog.server.services.processor.pre
 
 import darkladyblog.darkladyblog.common.model.app.TopicModel
 import darkladyblog.darkladyblog.common.util.now
-import io.ktor.server.application.ApplicationCall
 import kotlinx.datetime.LocalDateTime
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
-import org.koin.ktor.plugin.RequestScope
+import org.koin.core.annotation.Single
 
-@Scope(RequestScope::class)
-@Scoped
-class CompileTopicModelPreProcessor(call: ApplicationCall) : CompileModelPreProcessor<ULong, TopicModel>(call) {
+@Single
+class CompileTopicModelPreProcessor() : CompileModelPreProcessor<ULong, TopicModel>() {
     override fun accepts(model: Any): Boolean =
         model is TopicModel
 

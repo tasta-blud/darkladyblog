@@ -1,7 +1,8 @@
 package darkladyblog.darkladyblog.server.config
 
+import darkladyblog.darkladyblog.common.base.IRestController
+import darkladyblog.darkladyblog.common.config.ENDPOINT
 import darkladyblog.darkladyblog.server.base.Controller
-import darkladyblog.darkladyblog.server.base.RestController
 import io.ktor.server.application.Application
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -14,10 +15,9 @@ import org.koin.ktor.plugin.KoinApplicationStopPreparing
 fun Application.configureRouting() {
     val koin = getKoin()
     routing {
-        route("/api") {
-            val restControllers = koin.getAll<RestController<*, *, *, *, *>>()
+        route(ENDPOINT) {
+            val restControllers = koin.getAll<IRestController<*, *>>()
             restControllers.forEach {
-                it.init(this)
                 environment.log.info("registered RestController $it")
             }
             val controllers = koin.getAll<Controller>()
@@ -26,7 +26,6 @@ fun Application.configureRouting() {
             }
             val controllersRemaining = controllers - restControllers
             controllersRemaining.forEach {
-                it.init(this)
                 environment.log.info("registered Controller $it")
             }
         }

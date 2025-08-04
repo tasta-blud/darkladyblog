@@ -1,37 +1,31 @@
 package darkladyblog.darkladyblog.server.controllers
 
+import darkladyblog.darkladyblog.common.controllers.ITopicRestController
+import darkladyblog.darkladyblog.common.data.Sorting
 import darkladyblog.darkladyblog.common.model.app.TopicModel
 import darkladyblog.darkladyblog.server.base.RestController
 import darkladyblog.darkladyblog.server.db.Topics
 import darkladyblog.darkladyblog.server.repositories.TopicRepository
 import darkladyblog.darkladyblog.server.services.app.TopicRepositoryService
-import io.ktor.server.response.respond
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
-import kotlinx.serialization.builtins.serializer
+import io.ktor.server.application.ApplicationCall
 import org.koin.core.annotation.Single
 
 @Single
-class TopicRestController(topicRepositoryService: TopicRepositoryService) :
-    RestController<Topics, ULong, TopicModel, TopicRepository, TopicRepositoryService>(
-        "/topics", topicRepositoryService, ULong.serializer(), TopicModel.serializer()
-    ) {
+class TopicRestController(topicRepositoryService: TopicRepositoryService, call: ApplicationCall) :
+    RestController<Topics, ULong, TopicModel, TopicRepository, TopicRepositoryService>(topicRepositoryService, call),
+    ITopicRestController {
+    override suspend fun exists(id: ULong): Boolean =
+        repositoryService.exists(id)
 
-    override fun Route.additionalRoutes() {
-        get("/blog/{id}") {
-            sendBodyList(
-                call,
-                repositoryService.all(
-                    idParam(call.parameters),
-                    offset = offsetParam(call),
-                    limit = limitParam(call),
-                    order = orderParam(call) ?: arrayOf(),
-                )
-            )
+    override suspend fun allByBlog(
+        blogId: ULong,
+        offset: Long?,
+        limit: Int?,
+        order: Array<Sorting>
+    ): List<TopicModel> =
+        repositoryService.all(blogId, offset, limit, *mapOrder(order))
 
-        }
-        get("/blog/{id}/count") {
-            call.respond(repositoryService.count(idParam(call.parameters)))
-        }
-    }
+    override suspend fun countByBlog(blogId: ULong): Long =
+        repositoryService.count(blogId)
+
 }

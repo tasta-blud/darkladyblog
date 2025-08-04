@@ -7,15 +7,19 @@ import darkladyblog.darkladyblog.server.base.Repository
 import darkladyblog.darkladyblog.server.db.Blogs
 import darkladyblog.darkladyblog.server.db.Topics
 import darkladyblog.darkladyblog.server.db.Users
+import darkladyblog.darkladyblog.server.util.search
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Alias
 import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.alias
 import org.jetbrains.exposed.sql.leftJoin
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.koin.core.annotation.Single
@@ -60,16 +64,16 @@ class TopicRepository(private val userRepository: UserRepository, private val bl
         )
 
     override fun updating(table: Topics, it: UpdateBuilder<Int>, model: TopicModel) {
-        it[table.blog] = EntityID(model.blog.id!!, Blogs)
+        it[table.blog] = EntityID(model.blog.id ?: return, Blogs)
         it[table.title] = model.title
         it[table.descriptionShortSource] = model.descriptionShortSource
         it[table.descriptionShortCompiled] = model.descriptionShortCompiled
         it[table.descriptionLongSource] = model.descriptionLongSource
         it[table.descriptionLongCompiled] = model.descriptionLongCompiled
         it[table.alias] = model.alias
-        it[table.createdBy] = EntityID(model.createdBy.id!!, Users)
+        it[table.createdBy] = EntityID(model.createdBy.id ?: return, Users)
         it[table.createdAt] = model.createdAt
-        model.updatedBy?.let { updatedByRef -> it[table.updatedBy] = EntityID(updatedByRef.id!!, Users) }
+        model.updatedBy?.let { updatedByRef -> it[table.updatedBy] = EntityID(updatedByRef.id ?: return@let, Users) }
         it[table.updatedAt] = model.updatedAt
     }
 
@@ -85,4 +89,10 @@ class TopicRepository(private val userRepository: UserRepository, private val bl
     fun count(blogId: ULong): Long =
         count { alias[table.blog] eq blogId }
 
+    override fun searching(query: String, it: SqlExpressionBuilder, table: Topics, alias: Alias<Topics>): Op<Boolean> =
+        it.run {
+            query.let {
+                (alias[table.alias] search it) or (alias[table.title] search it) or (alias[table.descriptionLongSource] search it)
+            }
+        }
 }

@@ -1,0 +1,40 @@
+ktor:
+  application:
+    modules:
+      - "darkladyblog.darkladyblog.server.ApplicationKt.module"
+  deployment:
+    host: localhost
+    port: "$PORT:8080"
+    rootPath: "/"
+db:
+  port: "$PORT:8080"
+  driver: "$DB_DRIVER:org.h2.Driver"
+  url: "$DB_URL:jdbc:h2:file:~/darkladyblog;AUTO_SERVER=true;DB_CLOSE_DELAY=-1;MODE=MYSQL"
+  username: "$DB_USERNAME:darkladyblog"
+  password: "$DB_PASSWORD:darkladyblog"
+jwt:
+  domain: "https://jwt-provider-domain/"
+  audience: "jwt-audience"
+  realm: "ktor sample app"
+  secret: "secret"
+oauth:
+  google:
+    clientId: "client-id"
+    clientSecret: "client-secret"
+    authorizeUrl: "https://accounts.google.com/o/oauth2/auth"
+    accessTokenUrl: "https://accounts.google.com/o/oauth2/token"
+    defaultScopes:
+      - "https://www.googleapis.com/auth/userinfo.profile"
+  redirectUri: "http://localhost:8080/api/oauth/callback/google"
+  urlProvider: "https://oauth-provider-domain/"
+  scopes:
+    - "openid"
+    - "profile"
+    - "email"
+  authorizeUrl: "https://oauth-provider-domain/authorize"
+  tokenUrl: "https://oauth-provider-domain/token"
+  userInfoUrl: "https://oauth-provider-domain/userinfo"
+  jwksUrl: "https://oauth-provider-domain/.well-known/jwks.json"
+  issuer: "https://oauth-provider-domain/"
+  audience: "audience"
+  realm: "ktor sample app"

@@ -16,6 +16,11 @@ import darkladyblog.darkladyblog.client.services.CommentService
 import darkladyblog.darkladyblog.client.services.TopicService
 import darkladyblog.darkladyblog.client.store.PrincipalStore
 import darkladyblog.darkladyblog.client.util.navigates
+import darkladyblog.darkladyblog.common.controllers.ICommentRestController
+import darkladyblog.darkladyblog.common.controllers.ITopicRestController
+import darkladyblog.darkladyblog.common.data.ColumnName
+import darkladyblog.darkladyblog.common.data.SortDirection
+import darkladyblog.darkladyblog.common.data.Sorting
 import darkladyblog.darkladyblog.common.model.app.CommentModel
 import darkladyblog.darkladyblog.common.model.app.TopicModel
 import darkladyblog.darkladyblog.common.model.app.alias
@@ -40,10 +45,11 @@ import kotlinx.coroutines.flow.map
 
 fun RenderContext.appTopic(
     pageData: PageData,
-    store: RestStore<ULong, TopicModel, TopicService>,
+    store: RestStore<ULong, TopicModel, TopicService, ITopicRestController>,
     isEditing: Boolean = false
 ) {
-    val isTabCommentsActive: Boolean = pageData.element != null && (pageData.element!!.startsWith("#comment_"))
+    val isTabCommentsActive: Boolean =
+        pageData.element != null && ((pageData.element ?: return).startsWith("#comment_"))
     val isTabTopicActive: Boolean = !isTabCommentsActive
     div {
         val editing = BooleanRootStore(isEditing || store.current.id == null)
@@ -140,7 +146,14 @@ fun RenderContext.appTopic(
                 }
                 div("tab-pane fade", "topic_comments") {
                     className(if (isTabCommentsActive) "show active" else "")
-                    val listStore = object : RestListStore<ULong, CommentModel, CommentService>(CommentService) {
+                    val listStore = object : RestListStore<ULong, CommentModel, CommentService, ICommentRestController>(
+                        CommentService,
+                        order = arrayOf(
+                            Sorting(ColumnName("updated_at"), SortDirection.DESC),
+                            Sorting(ColumnName("created_at"), SortDirection.DESC),
+                            Sorting(ColumnName("id"), SortDirection.DESC),
+                        )
+                    ) {
                         override suspend fun countIt(): Long =
                             store.current.id.let { id ->
                                 if (id != null)
@@ -152,9 +165,9 @@ fun RenderContext.appTopic(
                         override suspend fun all(): List<CommentModel>? =
                             store.current.id.let { id ->
                                 if (id != null)
-                                    restService.all(id)
+                                    restService.all(id, order = order)
                                 else
-                                    restService.all()
+                                    restService.all(order = order)
                             }
                     }
                     appComments(pageData, listStore)

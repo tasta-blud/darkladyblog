@@ -7,13 +7,14 @@ import darkladyblog.darkladyblog.client.config.Pages
 import darkladyblog.darkladyblog.client.services.BlogService
 import darkladyblog.darkladyblog.client.store.PrincipalStore
 import darkladyblog.darkladyblog.client.util.navigates
+import darkladyblog.darkladyblog.common.controllers.IBlogRestController
 import darkladyblog.darkladyblog.common.model.UserModel
 import darkladyblog.darkladyblog.common.model.app.BlogModel
 import dev.fritz2.core.RenderContext
 
 fun RenderContext.pageBlog(pageData: PageData) {
     div {
-        val store = object : RestStore<ULong, BlogModel, BlogService>(
+        val store = object : RestStore<ULong, BlogModel, BlogService, IBlogRestController>(
             BlogService,
             BlogModel.NULL_BLOG.withUserAndId(
                 PrincipalStore.current?.let { UserModel.fromPrincipal(it) } ?: UserModel.NULL_USER,

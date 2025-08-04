@@ -7,11 +7,15 @@ import darkladyblog.darkladyblog.client.config.Pages
 import darkladyblog.darkladyblog.client.services.BlogService
 import darkladyblog.darkladyblog.client.store.PrincipalStore
 import darkladyblog.darkladyblog.client.util.navigates
+import darkladyblog.darkladyblog.common.controllers.IBlogRestController
 import darkladyblog.darkladyblog.common.model.app.BlogModel
 import dev.fritz2.core.RenderContext
 import dev.fritz2.core.type
 
-fun RenderContext.appBlogs(pageData: PageData, listStore: RestListStore<ULong, BlogModel, BlogService>) {
+fun RenderContext.appBlogs(
+    pageData: PageData,
+    listStore: RestListStore<ULong, BlogModel, BlogService, IBlogRestController>
+) {
     div {
         ul("list-group") {
             PrincipalStore.renderIfLogged(this) {

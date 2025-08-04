@@ -1,6 +1,6 @@
 package darkladyblog.darkladyblog.server.config
 
-import darkladyblog.darkladyblog.server.data.UserSession
+import darkladyblog.darkladyblog.common.data.UserSession
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.sessions.Sessions

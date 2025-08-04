@@ -4,9 +4,8 @@ package darkladyblog.darkladyblog.server.config
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import darkladyblog.darkladyblog.common.config.Config.SERVER_URL
-import darkladyblog.darkladyblog.server.controllers.AuthController
-import darkladyblog.darkladyblog.server.data.UserSession
+import darkladyblog.darkladyblog.common.config.SERVER_URL
+import darkladyblog.darkladyblog.common.data.UserSession
 import darkladyblog.darkladyblog.server.services.UserRepositoryService
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
@@ -26,8 +25,11 @@ import org.koin.ktor.ext.get
 
 
 fun Application.configureAuth() {
+    val AUTH_FORM: String = "form"
+    val AUTH_SESSION: String = "session"
+    val AUTH_JWT: String = "jwt"
     authentication {
-        form(AuthController.AUTH_FORM) {
+        form(AUTH_FORM) {
             userParamName = "username"
             passwordParamName = "password"
             validate { credentials ->
@@ -42,7 +44,7 @@ fun Application.configureAuth() {
                 call.respond(HttpStatusCode.Unauthorized, "Credentials are not valid")
             }
         }
-        session<UserSession>(AuthController.AUTH_SESSION) {
+        session<UserSession>(AUTH_SESSION) {
             validate { session ->
                 val authService: UserRepositoryService = get<UserRepositoryService>()
                 if (session.user == null) {
@@ -61,7 +63,7 @@ fun Application.configureAuth() {
         val jwtDomain = applicationConfig.property("jwt.domain").getString()
         val jwtRealm = applicationConfig.property("jwt.realm").getString()
         val jwtSecret = applicationConfig.property("jwt.secret").getString()
-        jwt(AuthController.AUTH_JWT) {
+        jwt(AUTH_JWT) {
             realm = jwtRealm
             verifier(
                 JWT

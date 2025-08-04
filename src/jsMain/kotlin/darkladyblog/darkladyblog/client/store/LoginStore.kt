@@ -11,7 +11,7 @@ object LoginStore : RootStoreBase<Credentials>(Credentials(), id = "credentials"
 
     val login: Handler<Unit> = handle { credentials ->
         credentials
-            .let { LoginService.doLogin(it) }
+            .let { LoginService.login(it) }
             .also { PrincipalStore.update(it) }
             .also { PrincipalStore.data handledBy PrincipalStore.update }
             ?.let { Credentials(it.username, it.password) }
@@ -21,16 +21,19 @@ object LoginStore : RootStoreBase<Credentials>(Credentials(), id = "credentials"
 
     val tryLogin: Handler<Unit> = handle { credentials ->
         credentials
-            .let { PrincipalStore.current ?: LoginService.tryLogin() }
+            .let {
+                PrincipalStore.current?.let { Credentials(it.username, it.password) }?.let { LoginService.tryLogin(it) }
+                    ?: let { LoginService.reLogin() }
+            }
             .also { PrincipalStore.update(it) }
             .also { PrincipalStore.data handledBy PrincipalStore.update }
             ?.let { Credentials(it.username, it.password) }
             ?.also { Alerts.success(LoginTranslations.welcome_w(it.username)) }
-            ?: initialData
+            ?: credentials
     }
 
     val logout: Handler<Unit> = handle {
-        LoginService.doLogout()
+        LoginService.logout()
             .also { PrincipalStore.update(null) }
             .also { PrincipalStore.data handledBy PrincipalStore.update }
             .let { initialData }

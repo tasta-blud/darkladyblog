@@ -11,6 +11,7 @@ import darkladyblog.darkladyblog.client.config.Pages
 import darkladyblog.darkladyblog.client.services.BlogService
 import darkladyblog.darkladyblog.client.store.PrincipalStore
 import darkladyblog.darkladyblog.client.util.navigates
+import darkladyblog.darkladyblog.common.controllers.IBlogRestController
 import darkladyblog.darkladyblog.common.model.app.BlogModel
 import darkladyblog.darkladyblog.common.model.app.alias
 import darkladyblog.darkladyblog.common.model.app.createdAt
@@ -34,7 +35,7 @@ import kotlinx.coroutines.flow.map
 
 fun RenderContext.appBlog(
     pageData: PageData,
-    store: RestStore<ULong, BlogModel, BlogService>,
+    store: RestStore<ULong, BlogModel, BlogService, IBlogRestController>,
     isEditing: Boolean = false
 ) {
     div {

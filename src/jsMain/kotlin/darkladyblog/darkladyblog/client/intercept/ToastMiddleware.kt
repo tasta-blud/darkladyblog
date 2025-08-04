@@ -1,7 +1,8 @@
 package darkladyblog.darkladyblog.client.intercept
 
 import darkladyblog.darkladyblog.client.services.Alerts
-import darkladyblog.darkladyblog.common.config.Config
+import darkladyblog.darkladyblog.common.config.DEBUG
+import darkladyblog.darkladyblog.common.config.DEBUG_REQUESTS
 import darkladyblog.darkladyblog.common.log.log
 import dev.fritz2.remote.Middleware
 import dev.fritz2.remote.Request
@@ -14,15 +15,13 @@ class ToastMiddleware(
     },
 ) : Middleware {
     override suspend fun enrichRequest(request: Request): Request {
-        @Suppress("SimplifyBooleanWithConstants")
-        if (Config.DEBUG && Config.DEBUG_REQUESTS)
+        if (DEBUG && DEBUG_REQUESTS)
             log.info("doing request @${request.hashCode()} ${request.method} ${request.url}: ", request)
         return request
     }
 
     override suspend fun handleResponse(response: Response): Response {
-        @Suppress("SimplifyBooleanWithConstants")
-        if (Config.DEBUG && Config.DEBUG_REQUESTS)
+        if (DEBUG && DEBUG_REQUESTS)
             log.info(
                 "getting response @${response.request.hashCode()} from ${response.request.method} ${response.request.url} [${response.status} ${response.statusText}]: ",
                 response

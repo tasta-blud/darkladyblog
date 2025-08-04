@@ -1,45 +1,38 @@
 package darkladyblog.darkladyblog.server.services
 
+import darkladyblog.darkladyblog.common.data.UserSession
+import darkladyblog.darkladyblog.common.ex.NoSuchUserException
 import darkladyblog.darkladyblog.common.model.UserModel
-import darkladyblog.darkladyblog.server.data.UserSession
+import darkladyblog.darkladyblog.common.services.IAuthService
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.sessions.clear
 import io.ktor.server.sessions.get
 import io.ktor.server.sessions.sessions
 import io.ktor.server.sessions.set
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
-import org.koin.core.component.KoinComponent
-import org.koin.ktor.plugin.RequestScope
+import org.koin.core.annotation.Factory
 
-@Scope(RequestScope::class)
-@Scoped
-class AuthService(private val service: UserRepositoryService, private val call: ApplicationCall) : KoinComponent {
+@Factory
+class AuthService(val service: UserRepositoryService, val call: ApplicationCall) : IAuthService {
 
-    suspend fun login(username: String): Boolean {
-        return login((service.getByUsername(username) ?: return false))
-    }
+    override suspend fun loginUsername(username: String): Result<UserSession> =
+        runCatching { service.getByUsername(username) }.mapCatching { loginUser(it).getOrThrow() }
 
-    suspend fun login(username: String, password: String): Boolean {
-        return (service.getByUsername(username) ?: return false).let {
-            if (service.checkPassword(it, password)) login(it) else false
-        }
-    }
+    override suspend fun loginUsernamePassword(username: String, password: String): Result<UserSession> =
+        runCatching {
+            service.getByUsername(username)?.takeIf { service.checkPassword(it, password) }
+        }.map { loginUser(it).getOrThrow() }
 
-    suspend fun login(user: UserModel?): Boolean {
-        call.sessions.set<UserSession>(UserSession(user, ""))
-        return true
-    }
+    override suspend fun loginUser(user: UserModel?): Result<UserSession> =
+        user?.let { UserSession(it, "") }
+            ?.runCatching { also { call.sessions.set<UserSession>(it) } }
+            ?: Result.failure(NoSuchUserException(""))
 
-    suspend fun logout() {
-        call.sessions.clear<UserSession>()
-    }
+    override suspend fun logout(): Boolean =
+        runCatching { call.sessions.clear<UserSession>() }.isSuccess
 
-    suspend fun hasUser(): Boolean {
-        return call.sessions.get<UserSession>() != null
-    }
+    override suspend fun hasUser(): Boolean =
+        runCatching { call.sessions.get<UserSession>() != null }.getOrDefault(false)
 
-    suspend fun getUser(): UserSession? {
-        return call.sessions.get<UserSession>()
-    }
+    override suspend fun getUser(): Result<UserSession> =
+        runCatching { call.sessions.get<UserSession>() ?: throw NoSuchUserException("") }
 }

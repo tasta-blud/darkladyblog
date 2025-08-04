@@ -1,9 +1,9 @@
 package darkladyblog.darkladyblog.server.config
 
-import darkladyblog.darkladyblog.common.config.Config.CLIENT_URL
-import darkladyblog.darkladyblog.common.config.Config.REAL_CLIENT_HOST
-import darkladyblog.darkladyblog.common.config.Config.REAL_CLIENT_URL
-import darkladyblog.darkladyblog.common.config.Config.REAL_SERVER_HOST
+import darkladyblog.darkladyblog.common.config.CLIENT_URL
+import darkladyblog.darkladyblog.common.config.REAL_CLIENT_HOST
+import darkladyblog.darkladyblog.common.config.REAL_CLIENT_URL
+import darkladyblog.darkladyblog.common.config.REAL_SERVER_HOST
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
@@ -15,7 +15,7 @@ import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 fun Application.configureSecurity() {
     install(DefaultHeaders) {
         header("X-Engine", "Ktor")
-        header(HttpHeaders.AccessControlAllowOrigin, REAL_CLIENT_URL)
+        header(HttpHeaders.AccessControlAllowOrigin, CLIENT_URL)
         header(HttpHeaders.AccessControlAllowCredentials, "true")
         header(HttpHeaders.AccessControlAllowMethods, "HEAD, GET, POST")
         header(HttpHeaders.AccessControlAllowHeaders, "Content-Type, Authorization, Cookie, *")

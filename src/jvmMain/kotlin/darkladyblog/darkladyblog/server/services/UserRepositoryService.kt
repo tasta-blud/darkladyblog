@@ -30,7 +30,7 @@ class UserRepositoryService(userRepository: UserRepository) :
 
     fun updatePassword(username: String, password: String) {
         val user: UserModel = getByUsername(username) ?: return
-        update(user.copy(password = encodePassword(user, password)), user.id!!)
+        update(user.copy(password = encodePassword(user, password)), user.id ?: return)
     }
 
     private fun encodePassword(user: UserModel, password: String): String {

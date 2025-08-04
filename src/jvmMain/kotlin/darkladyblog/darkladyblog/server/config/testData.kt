@@ -31,13 +31,13 @@ fun Application.testData() {
                     Sex.MALE
                 ).let { model -> userService.createReturning(model) { id -> model.copy(id = id) } }
             } else {
-                userService.getByUsername("user")!!
+                userService.getByUsername("user") ?: return@launch
             }
         val blogRepositoryService: BlogRepositoryService by inject()
         val topicRepositoryService: TopicRepositoryService by inject()
         val commentRepositoryService: CommentRepositoryService by inject()
         if (blogRepositoryService.count() == 0L) {
-            for (b in 0..3) {
+            for (b in 0..1) {
                 val blogModel = async {
                     BlogModel(
                         "Blog$b",
@@ -50,7 +50,7 @@ fun Application.testData() {
                         .let { model -> blogRepositoryService.createReturning(model) { id -> model.copy(id = id) } }
                 }.await()
                 launch {
-                    for (t in 0..100) {
+                    for (t in 0..3) {
                         val topicModel = async {
                             TopicModel(
                                 blogModel, "Topic$b$t",
@@ -63,7 +63,7 @@ fun Application.testData() {
                                 .let { model -> topicRepositoryService.createReturning(model) { id -> model.copy(id = id) } }
                         }.await()
                         launch {
-                            for (c in 0..100) {
+                            for (c in 0..2) {
                                 val commentModel = async {
                                     CommentModel(
                                         topicModel,
@@ -83,7 +83,7 @@ fun Application.testData() {
                                     }
                                 }.await()
                                 launch {
-                                    for (c1 in 0..10) {
+                                    for (c1 in 0..2) {
                                         async {
                                             CommentModel(
                                                 topicModel,

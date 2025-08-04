@@ -3,15 +3,11 @@ package darkladyblog.darkladyblog.server.services.processor.pre
 import darkladyblog.darkladyblog.common.model.app.BlogModel
 import darkladyblog.darkladyblog.common.util.now
 import darkladyblog.darkladyblog.common.util.toLocalizedString
-import io.ktor.server.application.ApplicationCall
 import kotlinx.datetime.LocalDateTime
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
-import org.koin.ktor.plugin.RequestScope
+import org.koin.core.annotation.Single
 
-@Scope(RequestScope::class)
-@Scoped
-class CompileBlogModelPreProcessor(call: ApplicationCall) : CompileModelPreProcessor<ULong, BlogModel>(call) {
+@Single
+class CompileBlogModelPreProcessor() : CompileModelPreProcessor<ULong, BlogModel>() {
     override fun accepts(model: Any): Boolean =
         model is BlogModel
 

@@ -10,6 +10,14 @@ import org.koin.core.component.KoinComponent
 abstract class RepositoryService<TBL : IdTable<ID>, ID : Any, E : Any, R : Repository<TBL, ID, E>>(val repository: R) :
     KoinComponent {
 
+    fun search(
+        query: String,
+        offset: Long? = null,
+        limit: Int? = null,
+        vararg order: Pair<Column<*>, SortOrder> = arrayOf(repository.alias[repository.table.id] to SortOrder.ASC),
+    ): List<E> =
+        repository.search(query, offset, limit, *order)
+
     fun all(
         offset: Long? = null,
         limit: Int? = null,

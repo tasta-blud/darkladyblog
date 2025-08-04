@@ -6,13 +6,17 @@ import darkladyblog.darkladyblog.common.util.toLocalizedString
 import darkladyblog.darkladyblog.server.base.Repository
 import darkladyblog.darkladyblog.server.db.Blogs
 import darkladyblog.darkladyblog.server.db.Users
+import darkladyblog.darkladyblog.server.util.search
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Alias
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.alias
 import org.jetbrains.exposed.sql.leftJoin
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.koin.core.annotation.Single
@@ -60,10 +64,16 @@ class BlogRepository(private val userRepository: UserRepository) : Repository<Bl
         it[table.descriptionLongSource] = model.descriptionLongSource
         it[table.descriptionLongCompiled] = model.descriptionLongCompiled
         it[table.alias] = model.alias
-        it[table.createdBy] = EntityID(model.createdBy.id!!, Users)
+        it[table.createdBy] = EntityID(model.createdBy.id ?: return, Users)
         it[table.createdAt] = model.createdAt
-        model.updatedBy?.let { updatedByRef -> it[table.updatedBy] = EntityID(updatedByRef.id!!, Users) }
+        model.updatedBy?.let { updatedByRef -> it[table.updatedBy] = EntityID(updatedByRef.id ?: return@let, Users) }
         it[table.updatedAt] = model.updatedAt
     }
 
+    override fun searching(query: String, it: SqlExpressionBuilder, table: Blogs, alias: Alias<Blogs>): Op<Boolean> =
+        it.run {
+            query.let {
+                (alias[table.alias] search it) or (alias[table.title] search it) or (alias[table.descriptionLongSource] search it)
+            }
+        }
 }

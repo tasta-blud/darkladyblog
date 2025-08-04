@@ -20,7 +20,23 @@ data class Principal(
     val descriptionLongCompiled: String = "",
     val id: ULong? = null
 ) {
+
     companion object {
         val NULL_PRINCIPAL: Principal = Principal("", "", "", "", Sex.NON_BINARY)
+
+        fun fromUser(it: UserModel): Principal =
+            Principal(
+                it.username,
+                it.password,
+                it.nick,
+                it.email,
+                it.sex,
+                it.title,
+                it.descriptionShortSource,
+                it.descriptionShortCompiled,
+                it.descriptionLongSource,
+                it.descriptionLongCompiled,
+                it.id,
+            )
     }
 }

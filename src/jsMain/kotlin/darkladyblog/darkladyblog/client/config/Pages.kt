@@ -8,12 +8,14 @@ import darkladyblog.darkladyblog.client.pages.pageIndex
 import darkladyblog.darkladyblog.client.pages.pageLogin
 import darkladyblog.darkladyblog.client.pages.pageProfile
 import darkladyblog.darkladyblog.client.pages.pageRegistration
+import darkladyblog.darkladyblog.client.pages.pageSearch
 import darkladyblog.darkladyblog.client.pages.pageTopic
 import darkladyblog.darkladyblog.i18n.ApplicationTranslations
 import darkladyblog.darkladyblog.i18n.CommonTranslations
 import darkladyblog.darkladyblog.i18n.ErrorTranslations
 import darkladyblog.darkladyblog.i18n.LoginTranslations
 import darkladyblog.darkladyblog.i18n.RegistrationTranslations
+import darkladyblog.darkladyblog.i18n.SearchTranslations
 
 enum class Pages(val page: Page) {
 
@@ -77,6 +79,14 @@ enum class Pages(val page: Page) {
             title = { RegistrationTranslations.registration() },
             isSpecial = true,
             content = { pageRegistration(it) }
+        )
+    ),
+    PAGE_SEARCH(
+        Page(
+            page = "search",
+            title = { SearchTranslations.title() },
+            isSpecial = true,
+            content = { pageSearch(it) }
         )
     ),
 }

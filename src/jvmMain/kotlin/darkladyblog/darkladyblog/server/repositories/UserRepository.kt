@@ -3,9 +3,13 @@ package darkladyblog.darkladyblog.server.repositories
 import darkladyblog.darkladyblog.common.model.UserModel
 import darkladyblog.darkladyblog.server.base.Repository
 import darkladyblog.darkladyblog.server.db.Users
+import darkladyblog.darkladyblog.server.util.search
 import org.jetbrains.exposed.sql.Alias
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.koin.core.annotation.Single
 
@@ -45,5 +49,12 @@ class UserRepository() : Repository<Users, ULong, UserModel>(Users) {
         it[table.descriptionLongSource] = model.descriptionLongSource
         it[table.descriptionLongCompiled] = model.descriptionLongCompiled
     }
+
+    override fun searching(query: String, it: SqlExpressionBuilder, table: Users, alias: Alias<Users>): Op<Boolean> =
+        it.run {
+            query.let {
+                (alias[table.title] search it) or (alias[table.descriptionLongSource] search it)
+            }
+        }
 
 }

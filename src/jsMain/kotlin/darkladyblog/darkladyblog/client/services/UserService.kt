@@ -1,9 +1,8 @@
 package darkladyblog.darkladyblog.client.services
 
 import darkladyblog.darkladyblog.client.base.rest.RestService
+import darkladyblog.darkladyblog.common.controllers.IUserRestController
 import darkladyblog.darkladyblog.common.model.UserModel
-import kotlinx.serialization.builtins.serializer
+import dev.kilua.rpc.getService
 
-object UserService : RestService<ULong, UserModel>(ULong.serializer(), UserModel.serializer(), "/users") {
-
-}
+object UserService : RestService<ULong, UserModel, IUserRestController>(controller = getService<IUserRestController>())

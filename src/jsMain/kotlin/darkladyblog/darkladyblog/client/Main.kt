@@ -17,19 +17,19 @@ import kotlinx.dom.appendText
 
 fun main() {
     render {
-        document.body!!.apply {
+        (document.body ?: return@render).apply {
             Styles.styles.forEach { style ->
-                document.head!!.appendElement("style") {
+                (document.head ?: return@forEach).appendElement("style") {
                     setAttributeNode(document.createAttribute("data-title").apply {
                         value = style.toString().replace("\n", "")
                     })
                     appendText(buildCss(style))
                 }
             }
-            parentElement!!.setAttributeNode(document.createAttribute("data-bs-theme").apply {
+            (parentElement ?: return@apply).setAttributeNode(document.createAttribute("data-bs-theme").apply {
                 value = "auto"
             })
-            parentElement!!.classList.add("h-100")
+            (parentElement ?: return@apply).classList.add("h-100")
             classList.add("h-100")
         }
         layout {

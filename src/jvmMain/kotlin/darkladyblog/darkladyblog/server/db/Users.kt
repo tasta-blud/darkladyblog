@@ -5,7 +5,7 @@ import darkladyblog.darkladyblog.server.data.DescribedTable
 import org.jetbrains.exposed.dao.id.ULongIdTable
 import org.jetbrains.exposed.sql.Column
 
-object Users : ULongIdTable(), DescribedTable<ULong> {
+object Users : ULongIdTable("users"), DescribedTable<ULong> {
     val username: Column<String> = varchar("username", length = 255).uniqueIndex()
     val password: Column<String> = varchar("password", length = 255)
     val nick: Column<String> = varchar("nick", length = 255)

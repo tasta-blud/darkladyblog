@@ -1,6 +1,7 @@
 package darkladyblog.darkladyblog.client.base.rest
 
 import darkladyblog.darkladyblog.client.base.store.RootStoreBase
+import darkladyblog.darkladyblog.common.base.IRestController
 import darkladyblog.darkladyblog.common.base.IdModel
 import dev.fritz2.core.Handler
 import dev.fritz2.core.Id
@@ -9,7 +10,7 @@ import dev.fritz2.core.Tag
 import kotlinx.coroutines.Job
 import org.w3c.dom.HTMLElement
 
-open class RestStore<ID : Any, M : IdModel<ID>, R : RestService<ID, M>>(
+open class RestStore<ID : Any, M : IdModel<ID>, R : RestService<ID, M, C>, C : IRestController<ID, M>>(
     val restService: R,
     initialData: M,
     job: Job = Job(),

@@ -1,54 +1,42 @@
 package darkladyblog.darkladyblog.server.controllers
 
+import darkladyblog.darkladyblog.common.controllers.ICommentRestController
+import darkladyblog.darkladyblog.common.data.Sorting
 import darkladyblog.darkladyblog.common.model.app.CommentModel
 import darkladyblog.darkladyblog.server.base.RestController
 import darkladyblog.darkladyblog.server.db.Comments
 import darkladyblog.darkladyblog.server.repositories.CommentRepository
 import darkladyblog.darkladyblog.server.services.app.CommentRepositoryService
-import io.ktor.server.response.respond
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
-import kotlinx.serialization.builtins.serializer
+import io.ktor.server.application.ApplicationCall
 import org.koin.core.annotation.Single
 
 @Single
-class CommentRestController(commentRepositoryService: CommentRepositoryService) :
+class CommentRestController(commentRepositoryService: CommentRepositoryService, call: ApplicationCall) :
     RestController<Comments, ULong, CommentModel, CommentRepository, CommentRepositoryService>(
-        "/comments",
         commentRepositoryService,
-        ULong.serializer(),
-        CommentModel.serializer()
-    ) {
+        call
+    ), ICommentRestController {
 
-    override fun Route.additionalRoutes() {
-        get("/topic/{id}") {
-            sendBodyList(
-                call,
-                repositoryService.all(
-                    idParam(call.parameters),
-                    offset = offsetParam(call),
-                    limit = limitParam(call),
-                    order = orderParam(call) ?: arrayOf(),
-                )
-            )
-        }
-        get("/topic/{id}/{pid}") {
-            sendBodyList(
-                call,
-                repositoryService.all(
-                    idParam(call.parameters),
-                    idParam(call.parameters, "pid"),
-                    offset = offsetParam(call),
-                    limit = limitParam(call),
-                    order = orderParam(call) ?: arrayOf(),
-                )
-            )
-        }
-        get("/topic/{id}/count") {
-            call.respond(repositoryService.count(idParam(call.parameters)))
-        }
-        get("/topic/{id}/{pid}/count") {
-            call.respond(repositoryService.count(idParam(call.parameters), idParam(call.parameters, "pid")))
-        }
-    }
+    override suspend fun allByTopic(
+        topicId: ULong,
+        offset: Long?,
+        limit: Int?,
+        order: Array<Sorting>
+    ): List<CommentModel> =
+        repositoryService.all(topicId, offset, limit, *mapOrder(order))
+
+    override suspend fun allByTopicAndParent(
+        topicId: ULong,
+        commentId: ULong,
+        offset: Long?,
+        limit: Int?,
+        order: Array<Sorting>
+    ): List<CommentModel> =
+        repositoryService.all(topicId, commentId, offset, limit, *mapOrder(order))
+
+    override suspend fun countByTopic(topicId: ULong): Long =
+        repositoryService.count(topicId)
+
+    override suspend fun countByTopicAndParent(topicId: ULong, commentId: ULong): Long =
+        repositoryService.count(topicId, commentId)
 }

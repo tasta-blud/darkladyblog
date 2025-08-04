@@ -10,16 +10,28 @@ import darkladyblog.darkladyblog.client.services.BlogService
 import darkladyblog.darkladyblog.client.services.TopicService
 import darkladyblog.darkladyblog.client.store.PrincipalStore
 import darkladyblog.darkladyblog.client.util.navigates
+import darkladyblog.darkladyblog.common.controllers.IBlogRestController
+import darkladyblog.darkladyblog.common.controllers.ITopicRestController
+import darkladyblog.darkladyblog.common.data.ColumnName
+import darkladyblog.darkladyblog.common.data.SortDirection
+import darkladyblog.darkladyblog.common.data.Sorting
 import darkladyblog.darkladyblog.common.model.app.BlogModel
 import darkladyblog.darkladyblog.common.model.app.TopicModel
 import dev.fritz2.core.RenderContext
 import dev.fritz2.core.type
 
 
-fun RenderContext.appTopics(pageData: PageData, store: RestStore<ULong, BlogModel, BlogService>) {
+fun RenderContext.appTopics(pageData: PageData, store: RestStore<ULong, BlogModel, BlogService, IBlogRestController>) {
     div {
         store.render(this) {
-            val listStore = object : RestListStorePageable<ULong, TopicModel, TopicService>(TopicService) {
+            val listStore = object : RestListStorePageable<ULong, TopicModel, TopicService, ITopicRestController>(
+                TopicService,
+                order = arrayOf(
+                    Sorting(ColumnName("updated_at"), SortDirection.DESC),
+                    Sorting(ColumnName("created_at"), SortDirection.DESC),
+                    Sorting(ColumnName("id"), SortDirection.DESC),
+                )
+            ) {
                 override suspend fun countIt(): Long =
                     store.current.id.let { id ->
                         if (id != null)
@@ -31,9 +43,18 @@ fun RenderContext.appTopics(pageData: PageData, store: RestStore<ULong, BlogMode
                 override suspend fun all(): List<TopicModel>? =
                     store.current.id.let { id ->
                         if (id != null)
-                            restService.all(id, paginationStore.current.offset, paginationStore.current.limit)
+                            restService.all(
+                                id,
+                                paginationStore.current.offset,
+                                paginationStore.current.limit,
+                                order = order
+                            )
                         else
-                            restService.all(paginationStore.current.offset, paginationStore.current.limit)
+                            restService.all(
+                                paginationStore.current.offset,
+                                paginationStore.current.limit,
+                                order = order
+                            )
                     }
             }
             pagination(listStore.paginationStore)

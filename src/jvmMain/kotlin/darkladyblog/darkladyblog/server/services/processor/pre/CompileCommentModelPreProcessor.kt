@@ -2,15 +2,11 @@ package darkladyblog.darkladyblog.server.services.processor.pre
 
 import darkladyblog.darkladyblog.common.model.app.CommentModel
 import darkladyblog.darkladyblog.common.util.now
-import io.ktor.server.application.ApplicationCall
 import kotlinx.datetime.LocalDateTime
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
-import org.koin.ktor.plugin.RequestScope
+import org.koin.core.annotation.Single
 
-@Scope(RequestScope::class)
-@Scoped
-class CompileCommentModelPreProcessor(call: ApplicationCall) : CompileModelPreProcessor<ULong, CommentModel>(call) {
+@Single
+class CompileCommentModelPreProcessor() : CompileModelPreProcessor<ULong, CommentModel>() {
     override fun accepts(model: Any): Boolean =
         model is CommentModel
 

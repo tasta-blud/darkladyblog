@@ -27,13 +27,24 @@ abstract class Repository<TBL : IdTable<ID>, ID : Any, E : Any>(
 
     internal abstract fun updating(table: TBL, it: UpdateBuilder<Int>, model: E)
 
+    internal abstract fun searching(query: String, it: SqlExpressionBuilder, table: TBL, alias: Alias<TBL>): Op<Boolean>
+
+
+    fun search(
+        query: String,
+        offset: Long? = null,
+        limit: Int? = null,
+        vararg order: Pair<Column<*>, SortOrder> = arrayOf(alias[table.id] to SortOrder.ASC),
+    ): List<E> =
+        all(offset, limit, *order) { searching(query, this, table, alias) }
+
     fun all(
         offset: Long? = null,
         limit: Int? = null,
         vararg order: Pair<Column<*>, SortOrder> = arrayOf(alias[table.id] to SortOrder.ASC),
         op: SqlExpressionBuilder.() -> Op<Boolean> = { Op.TRUE }
     ): List<E> =
-        db.transactionally {
+        db.transactionallyReadonly {
             selectRows(table, alias)
                 .where(op)
                 .orderBy(*(order))
@@ -83,17 +94,18 @@ abstract class Repository<TBL : IdTable<ID>, ID : Any, E : Any>(
         }
 
     fun count(op: SqlExpressionBuilder.() -> Op<Boolean> = { Op.TRUE }): Long =
-        db.transactionally {
+        db.transactionallyReadonly {
             alias.select(alias[table.id]).where(op).count()
         }
 
     fun exists(id: ID): Boolean =
-        db.transactionally {
+        db.transactionallyReadonly {
             alias.select(alias[table.id]).where { table.id eq id }.limit(1).singleOrNull()
         } != null
 
     fun exists(op: SqlExpressionBuilder.() -> Op<Boolean> = { Op.TRUE }): Boolean =
-        db.transactionally {
+        db.transactionallyReadonly {
             alias.select(alias[table.id]).where(op).count()
         } != 0L
+
 }

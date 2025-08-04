@@ -1,7 +1,11 @@
 package darkladyblog.darkladyblog.client.base.rest
 
 import darkladyblog.darkladyblog.client.base.store.RootStoreListBase
+import darkladyblog.darkladyblog.common.base.IRestController
 import darkladyblog.darkladyblog.common.base.IdModel
+import darkladyblog.darkladyblog.common.data.ColumnName
+import darkladyblog.darkladyblog.common.data.SortDirection
+import darkladyblog.darkladyblog.common.data.Sorting
 import dev.fritz2.core.Handler
 import dev.fritz2.core.Id
 import dev.fritz2.core.IdProvider
@@ -10,9 +14,10 @@ import dev.fritz2.core.Tag
 import kotlinx.coroutines.Job
 import org.w3c.dom.HTMLElement
 
-open class RestListStore<ID : Any, M : IdModel<ID>, R : RestService<ID, M>>(
+open class RestListStore<ID : Any, M : IdModel<ID>, R : RestService<ID, M, C>, C : IRestController<ID, M>>(
     val restService: R,
     initialData: List<M> = listOf<M>(),
+    val order: Array<Sorting> = arrayOf(Sorting(ColumnName("id"), SortDirection.ASC)),
     job: Job = Job(),
     override val id: String = Id.next()
 ) : RootStoreListBase<M>(initialData, job, id) {
@@ -29,7 +34,7 @@ open class RestListStore<ID : Any, M : IdModel<ID>, R : RestService<ID, M>>(
     }
 
     protected open suspend fun all(): List<M>? =
-        restService.all()
+        restService.all(order = order)
 
     override val set: Handler<List<M>> = handle { currentList: List<M>, value: List<M> ->
         value.also {

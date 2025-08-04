@@ -1,6 +1,9 @@
+@file:Suppress("D")
+
 package darkladyblog.darkladyblog.client.pages
 
 import darkladyblog.darkladyblog.client.base.route.PageData
+import darkladyblog.darkladyblog.client.base.store.BooleanRootStore
 import darkladyblog.darkladyblog.client.config.Pages
 import darkladyblog.darkladyblog.client.services.OAuthService
 import darkladyblog.darkladyblog.client.store.LoginStore
@@ -19,50 +22,57 @@ import dev.fritz2.core.`for`
 import dev.fritz2.core.id
 import dev.fritz2.core.name
 import dev.fritz2.core.placeholder
+import dev.fritz2.core.required
 import dev.fritz2.core.states
 import dev.fritz2.core.type
 import dev.fritz2.core.value
 import dev.fritz2.core.values
+import kotlinx.coroutines.flow.map
 
 fun RenderContext.pageLogin(pageData: PageData, id: String = "login" + Id.next()) {
     val username = LoginStore.map(Credentials.username())
     val password = LoginStore.map(Credentials.password())
     val rememberMe = LoginStore.map(Credentials.rememberMe())
-    div("d-flex align-items-center py-4 bg-body-tertiary") {
-        main("form-signin w-100 m-auto") {
+    div("d-flex py-4 bg-body-tertiary") {
+        main("form-signin col-6 m-auto") {
+            val showPassword = BooleanRootStore(false)
             form {
                 h1("h3 mb-3 fw-normal") { +LoginTranslations.please_sign_in() }
-                div("form-floating") {
+                div {
                     input("form-control") {
                         name("username")
                         type("text")
                         id("loginUsername$id")
                         placeholder(LoginTranslations.username())
+                        required(true)
                         attr("autocomplete", "username")
                         value(username.data)
                         changes.values() handledBy username.update
                     }
-                    label {
-                        `for`("loginUsername$id")
-                        +LoginTranslations.username()
-                    }
                 }
                 div("form-floating") {
-                    input("form-control") {
-                        name("password")
-                        type("password")
-                        id("loginPassword$id")
-                        placeholder(LoginTranslations.password())
-                        attr("autocomplete", "current-password")
-                        value(password.data)
-                        changes.values() handledBy password.update
-                    }
-                    label {
-                        `for`("loginPassword$id")
-                        +LoginTranslations.password()
+                    div("input-group") {
+                        input("form-control") {
+                            name("password")
+                            type(showPassword.data.map { if (it) "text" else "password" })
+                            id("loginPassword$id")
+                            placeholder(LoginTranslations.password())
+                            required(true)
+                            attr("autocomplete", "current-password")
+                            value(password.data)
+                            changes.values() handledBy password.update
+                        }
+                        button("btn") {
+                            type("button")
+                            className(showPassword.data.map { if (it) "btn-outline-light" else "btn-outline-secondary" })
+                            clicks handledBy showPassword.switch
+                            i("bi") {
+                                className(showPassword.data.map { if (it) "bi-eye" else "bi-eye-slash" })
+                            }
+                        }
                     }
                 }
-                div("form-check text-start my-3") {
+                div("form-check text-start") {
                     input("form-check-input") {
                         type("checkbox")
                         value("remember-me")
@@ -75,22 +85,22 @@ fun RenderContext.pageLogin(pageData: PageData, id: String = "login" + Id.next()
                         +LoginTranslations.remember_me()
                     }
                 }
-                button("btn btn-primary w-100 py-2") {
+                button("btn btn-primary w-100 mb-2") {
                     type("button")
                     +LoginTranslations.sign_in()
                     navigates(LoginStore.login, Pages.PAGE_BLOGS.page.withParameters())
                 }
                 div("row border-top") {
-                    div("col text-center mt-3 mb-2") {
+                    div("col mt-3 mb-2") {
                         label {
                             +LoginTranslations.sign_in_please()
                         }
                     }
                 }
-                div("row justify-content-center") {
+                div("row") {
                     OAuthClient.entries.forEach { oAuthClient: OAuthClient ->
-                        div("col-2 justify-content-center") {
-                            div("input-group") {
+                        div("") {
+                            div("input-group text-nowrap") {
                                 button("btn btn-outline-secondary") {
                                     i(oAuthClient.icon) {}
                                     clicks handledBy { it.preventDefault() }

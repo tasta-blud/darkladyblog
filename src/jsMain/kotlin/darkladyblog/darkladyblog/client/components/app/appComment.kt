@@ -11,6 +11,7 @@ import darkladyblog.darkladyblog.client.data.PageRouter
 import darkladyblog.darkladyblog.client.services.CommentService
 import darkladyblog.darkladyblog.client.store.PrincipalStore
 import darkladyblog.darkladyblog.client.util.navigates
+import darkladyblog.darkladyblog.common.controllers.ICommentRestController
 import darkladyblog.darkladyblog.common.model.UserModel
 import darkladyblog.darkladyblog.common.model.app.CommentModel
 import darkladyblog.darkladyblog.common.model.app.createdAtString
@@ -31,7 +32,7 @@ import kotlinx.coroutines.flow.map
 
 fun RenderContext.appComment(
     pageData: PageData,
-    listStore: RestListStore<ULong, CommentModel, CommentService>,
+    listStore: RestListStore<ULong, CommentModel, CommentService, ICommentRestController>,
     commentId: ULong?,
     parentId: ULong?,
     isEditing: Boolean = false

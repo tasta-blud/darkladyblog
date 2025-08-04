@@ -1,7 +1,6 @@
 package darkladyblog.darkladyblog.client.store
 
 import darkladyblog.darkladyblog.client.base.store.RootStoreBase
-import darkladyblog.darkladyblog.client.services.LoginService
 import darkladyblog.darkladyblog.common.base.Modified
 import darkladyblog.darkladyblog.common.base.Owned
 import darkladyblog.darkladyblog.common.model.Principal
@@ -16,7 +15,7 @@ import org.w3c.dom.HTMLElement
 object PrincipalStore : RootStoreBase<Principal?>(null) {
     init {
         initialize {
-            LoginService.auth.authenticated.filter { !it }.map { } handledBy LoginStore.tryLogin
+            data.filter { it == null }.map { } handledBy LoginStore.tryLogin
         }
     }
 

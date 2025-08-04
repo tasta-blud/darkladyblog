@@ -32,7 +32,7 @@ private object Themes {
         getStoredTheme() ?: if (isPreferredThemeDark()) "dark" else "light"
 
     fun setTheme(theme: String) {
-        document.documentElement!!.setAttribute(
+        (document.documentElement ?: return).setAttribute(
             "data-bs-theme", when {
                 theme != "auto" -> theme
                 else -> getPreferredTheme()

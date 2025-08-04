@@ -93,7 +93,7 @@ fun RenderContext.assistant() {
         }
     }
     useEffect {
-        document.getElementById("assistant-content")!!.addEventListener("shown.bs.collapse", {
+        (document.getElementById("assistant-content") ?: return@useEffect).addEventListener("shown.bs.collapse", {
             document.getElementById("assistant-text").apply {
                 asDynamic().focus()
                 asDynamic().select()

@@ -7,6 +7,7 @@ import darkladyblog.darkladyblog.client.config.Pages
 import darkladyblog.darkladyblog.client.services.TopicService
 import darkladyblog.darkladyblog.client.store.PrincipalStore
 import darkladyblog.darkladyblog.client.util.navigates
+import darkladyblog.darkladyblog.common.controllers.ITopicRestController
 import darkladyblog.darkladyblog.common.model.UserModel
 import darkladyblog.darkladyblog.common.model.app.BlogModel
 import darkladyblog.darkladyblog.common.model.app.TopicModel
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.map
 
 fun RenderContext.pageTopic(pageData: PageData) {
     div {
-        val store = object : RestStore<ULong, TopicModel, TopicService>(
+        val store = object : RestStore<ULong, TopicModel, TopicService, ITopicRestController>(
             TopicService,
             TopicModel.NULL_TOPIC.withBlogAndUserAndId(
                 BlogModel.NULL_BLOG.withUserAndId(
