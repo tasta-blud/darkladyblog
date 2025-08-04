@@ -4,7 +4,7 @@ package darkladyblog.darkladyblog.server.config
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import darkladyblog.darkladyblog.common.config.Config.SERVER_URL
+import darkladyblog.darkladyblog.common.config.SERVER_URL
 import darkladyblog.darkladyblog.server.controllers.AuthController
 import darkladyblog.darkladyblog.server.data.UserSession
 import darkladyblog.darkladyblog.server.services.UserRepositoryService

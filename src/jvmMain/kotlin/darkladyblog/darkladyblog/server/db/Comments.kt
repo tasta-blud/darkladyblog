@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object Comments : ULongIdTable(), DescribedTable<ULong>, ModifiedTable<ULong> {
+object Comments : ULongIdTable("comments"), DescribedTable<ULong>, ModifiedTable<ULong> {
     val topic: Column<EntityID<ULong>> = reference("topic", Topics, onDelete = ReferenceOption.CASCADE)
     val parent: Column<EntityID<ULong>?> = optReference("parent", Comments, onDelete = ReferenceOption.CASCADE)
     override val title: Column<String> = varchar("title", length = 255)

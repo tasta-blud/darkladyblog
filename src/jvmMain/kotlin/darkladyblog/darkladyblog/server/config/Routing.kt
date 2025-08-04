@@ -1,5 +1,6 @@
 package darkladyblog.darkladyblog.server.config
 
+import darkladyblog.darkladyblog.common.config.ENDPOINT
 import darkladyblog.darkladyblog.server.base.Controller
 import darkladyblog.darkladyblog.server.base.RestController
 import io.ktor.server.application.Application
@@ -14,7 +15,7 @@ import org.koin.ktor.plugin.KoinApplicationStopPreparing
 fun Application.configureRouting() {
     val koin = getKoin()
     routing {
-        route("/api") {
+        route(ENDPOINT) {
             val restControllers = koin.getAll<RestController<*, *, *, *, *>>()
             restControllers.forEach {
                 it.init(this)

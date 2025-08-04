@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object Topics : ULongIdTable(), AliasedTable<ULong>, DescribedTable<ULong>, ModifiedTable<ULong> {
+object Topics : ULongIdTable("topics"), AliasedTable<ULong>, DescribedTable<ULong>, ModifiedTable<ULong> {
     val blog: Column<EntityID<ULong>> = reference("blog", Blogs, onDelete = ReferenceOption.CASCADE)
     override val title: Column<String> = varchar("title", length = 255)
     override val descriptionShortSource: Column<String> = varchar("description_short_source", length = 255)

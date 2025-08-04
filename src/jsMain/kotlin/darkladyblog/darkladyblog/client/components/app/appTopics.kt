@@ -19,7 +19,14 @@ import dev.fritz2.core.type
 fun RenderContext.appTopics(pageData: PageData, store: RestStore<ULong, BlogModel, BlogService>) {
     div {
         store.render(this) {
-            val listStore = object : RestListStorePageable<ULong, TopicModel, TopicService>(TopicService) {
+            val listStore = object : RestListStorePageable<ULong, TopicModel, TopicService>(
+                TopicService,
+                order = arrayOf(
+                    "updated_at" to "DESC",
+                    "created_at" to "DESC",
+                    "id" to "DESC",
+                )
+            ) {
                 override suspend fun countIt(): Long =
                     store.current.id.let { id ->
                         if (id != null)
@@ -31,9 +38,18 @@ fun RenderContext.appTopics(pageData: PageData, store: RestStore<ULong, BlogMode
                 override suspend fun all(): List<TopicModel>? =
                     store.current.id.let { id ->
                         if (id != null)
-                            restService.all(id, paginationStore.current.offset, paginationStore.current.limit)
+                            restService.all(
+                                id,
+                                paginationStore.current.offset,
+                                paginationStore.current.limit,
+                                order = order
+                            )
                         else
-                            restService.all(paginationStore.current.offset, paginationStore.current.limit)
+                            restService.all(
+                                paginationStore.current.offset,
+                                paginationStore.current.limit,
+                                order = order
+                            )
                     }
             }
             pagination(listStore.paginationStore)

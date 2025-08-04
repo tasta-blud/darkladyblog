@@ -2,7 +2,7 @@ package darkladyblog.darkladyblog.client.store
 
 import darkladyblog.darkladyblog.client.base.store.RootStoreListBase
 import darkladyblog.darkladyblog.client.services.Alerts
-import darkladyblog.darkladyblog.common.config.Config
+import darkladyblog.darkladyblog.common.config.WS_SERVER_ALERTS
 import darkladyblog.darkladyblog.common.model.AlertMessage
 import darkladyblog.darkladyblog.common.model.AlertType
 import dev.fritz2.core.Handler
@@ -17,7 +17,7 @@ object AlertMessageStore : RootStoreListBase<AlertMessage>() {
 
     lateinit var session: Session
 
-    private val socket: Socket = websocket(Config.WS_SERVER_ALERTS)
+    private val socket: Socket = websocket(WS_SERVER_ALERTS)
 
     operator fun invoke() {
         session = connect()

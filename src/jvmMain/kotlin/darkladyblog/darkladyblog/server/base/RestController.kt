@@ -78,9 +78,18 @@ abstract class RestController<TBL : IdTable<ID>, ID : Any, E : IdModel<ID>, R : 
     protected open fun orderParam(call: RoutingCall, paramName: String = "order"): Array<Pair<Column<*>, SortOrder>>? =
         call.parameters[paramName]?.split(",")?.map {
             it.split(' ', limit = 2).let { list ->
-                list[0].let { n -> repositoryService.repository.table.columns.first { c -> c.name == n } }.let { col ->
+                list[0].let { n ->
+                    repositoryService.repository.table.columns.firstOrNull { c -> c.name == n }
+                        ?: error(
+                            "no column named $n found in table ${repositoryService.repository.table.tableName}" +
+                                    " which are ${repositoryService.repository.table.columns.map { c -> c.name }}"
+                        )
+                }.let { col ->
                     repositoryService.repository.alias[col]
-                } to SortOrder.valueOf(list[1])
+                } to list[1].let { s ->
+                    runCatching { SortOrder.valueOf(s) }.getOrNull()
+                        ?: error("$s should be one of ${SortOrder.entries}")
+                }
             }
         }?.toTypedArray()
 

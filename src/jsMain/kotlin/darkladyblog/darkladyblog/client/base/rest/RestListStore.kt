@@ -13,6 +13,7 @@ import org.w3c.dom.HTMLElement
 open class RestListStore<ID : Any, M : IdModel<ID>, R : RestService<ID, M>>(
     val restService: R,
     initialData: List<M> = listOf<M>(),
+    vararg val order: Pair<String, String> = arrayOf("id" to "ASC"),
     job: Job = Job(),
     override val id: String = Id.next()
 ) : RootStoreListBase<M>(initialData, job, id) {
@@ -29,7 +30,7 @@ open class RestListStore<ID : Any, M : IdModel<ID>, R : RestService<ID, M>>(
     }
 
     protected open suspend fun all(): List<M>? =
-        restService.all()
+        restService.all(order = order)
 
     override val set: Handler<List<M>> = handle { currentList: List<M>, value: List<M> ->
         value.also {

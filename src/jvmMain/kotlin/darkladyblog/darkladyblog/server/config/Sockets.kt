@@ -1,7 +1,7 @@
 package darkladyblog.darkladyblog.server.config
 
-import darkladyblog.darkladyblog.common.config.Config.WS_ALERTS
-import darkladyblog.darkladyblog.common.config.Config.WS_ASSISTANT
+import darkladyblog.darkladyblog.common.config.WS_ALERTS
+import darkladyblog.darkladyblog.common.config.WS_ASSISTANT
 import darkladyblog.darkladyblog.server.services.AlertMessageSender
 import darkladyblog.darkladyblog.server.services.assistant.AssistantService
 import io.ktor.server.application.Application

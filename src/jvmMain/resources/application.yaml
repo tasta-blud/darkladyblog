@@ -3,14 +3,14 @@ ktor:
     modules:
       - "darkladyblog.darkladyblog.server.ApplicationKt.module"
   deployment:
-    host: localhost
-    port: 8080
+    port: "$PORT:8080"
     rootPath: "/"
 db:
-  driver: "org.h2.Driver"
-  url: "jdbc:h2:file:~/darkladyblog;AUTO_SERVER=true;DB_CLOSE_DELAY=-1;MODE=MYSQL"
-  username: "darkladyblog"
-  password: "darkladyblog"
+  port: "$PORT:5432"
+  driver: "$DB_DRIVER:org.postgresql.Driver"
+  url: "$DB_URL:jdbc:postgresql://localhost:5432/darkladyblog?user=darkladyblog&password=darkladyblog"
+  username: "$DB_USERNAME:darkladyblog"
+  password: "$DB_PASSWORD:darkladyblog"
 jwt:
   domain: "https://jwt-provider-domain/"
   audience: "jwt-audience"
@@ -24,7 +24,7 @@ oauth:
     accessTokenUrl: "https://accounts.google.com/o/oauth2/token"
     defaultScopes:
       - "https://www.googleapis.com/auth/userinfo.profile"
-  redirectUri: "http://localhost:8080/login/oauth"
+  redirectUri: "http://localhost:8080/auth/callback"
   urlProvider: "https://oauth-provider-domain/"
   scopes:
     - "openid"

@@ -10,7 +10,7 @@ import org.jetbrains.exposed.dao.id.ULongIdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-object Blogs : ULongIdTable(), AliasedTable<ULong>, DescribedTable<ULong>, ModifiedTable<ULong> {
+object Blogs : ULongIdTable("blogs"), AliasedTable<ULong>, DescribedTable<ULong>, ModifiedTable<ULong> {
     override val title: Column<String> = varchar("title", length = 255)
     override val descriptionShortSource: Column<String> = varchar("description_short_source", length = 255)
     override val descriptionShortCompiled: Column<String> = varchar("description_short_compiled", length = 255)

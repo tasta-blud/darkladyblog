@@ -1,6 +1,6 @@
 package darkladyblog.darkladyblog.server.config
 
-import darkladyblog.darkladyblog.common.config.Config
+import darkladyblog.darkladyblog.common.config.DEBUG_REQUESTS
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -22,7 +22,7 @@ fun Application.configureCallLogging() {
     install(CallLogging) {
         callIdMdc("call-id")
         @Suppress("KotlinConstantConditions")
-        if (Config.DEBUG_REQUESTS)
+        if (DEBUG_REQUESTS)
             format { call ->
                 val status = call.response.status()
                 val httpMethod = call.request.httpMethod.value

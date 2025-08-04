@@ -2,7 +2,7 @@ package darkladyblog.darkladyblog.client.base.rest
 
 import darkladyblog.darkladyblog.client.base.store.RootStoreListBase
 import darkladyblog.darkladyblog.client.store.PaginationStore
-import darkladyblog.darkladyblog.common.config.Config.PAGE_SIZE
+import darkladyblog.darkladyblog.common.config.PAGE_SIZE
 import darkladyblog.darkladyblog.common.model.Paginator
 import dev.fritz2.core.Id
 import kotlinx.coroutines.Job

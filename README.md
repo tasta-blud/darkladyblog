@@ -6,6 +6,7 @@ A blog platform with ability to make multiple blogs by posting.
 
 - Multiple users
 - Multiple blogs per user
+- Shortened content in lists
 - Local registration or by sign-in platforms ([oauth](https://oauth.net/2/))
 - In-place editing when registered
 - Markdown visual editor
@@ -23,7 +24,9 @@ A blog platform with ability to make multiple blogs by posting.
 - [Kotlin](https://kotlinlang.org/) [multiplatform](https://www.jetbrains.com/kotlin-multiplatform/): [Ktor](https://ktor.io/) [server](https://ktor.io/docs/server-create-a-new-project.html), [Koin](https://insert-koin.io/)
   Dependency Injection, [Fritz2](https://www.fritz2.dev/) frontend, [Exposed](https://www.jetbrains.com/exposed/) SQL
   library, [Bootstrap](https://getbootstrap.com/) CSS library, [i18n4k](https://comahe-de.github.io/i18n4k/) typesafe
-  localization**
+  localization, [Editor.MD](https://pandao.github.io/editor.md/en.html)
+  visual [Markdown](https://en.wikipedia.org/wiki/Markdown) editor, Kotlin multiplatform
+  date-time [library](https://github.com/Kotlin/kotlinx-datetime)
 - Multi-layer architecture (controllers, services, repositories(database related), entities and models (DTOs),
   interceptors)
 - REST/JSON client-server communication as well as sockets
@@ -40,3 +43,47 @@ rendering
 - Cross-platform logging ([slf4j](https://www.slf4j.org/) on server
   and [console](https://developer.mozilla.org/en-US/docs/Web/API/console/log_static))
 - *.properties i18n files compiled
+
+## Some screenshots:
+
+Title:
+![alt text](images/screenshots/Screenshot_1.png)
+
+Blogs:
+![alt text](images/screenshots/Screenshot_2.png)
+
+Blog (with topics having shortened content):
+![alt text](images/screenshots/Screenshot_3.png)
+
+Full single topic content:
+![alt text](images/screenshots/Screenshot_4.png)
+
+Topic comments tab:
+![alt text](images/screenshots/Screenshot_5.png)
+
+User info:
+![alt text](images/screenshots/Screenshot_6.png)
+
+Registration (markdown visual editor):
+![alt text](images/screenshots/Screenshot_7.png)
+
+Login:
+![alt text](images/screenshots/Screenshot_8.png)
+
+Welcome message (toast) after login:
+![alt text](images/screenshots/Screenshot_9.png)
+
+Message from server as toast:
+![alt text](images/screenshots/Screenshot_10.png)
+
+My info editing:
+![alt text](images/screenshots/Screenshot_11.png)
+
+User upper menu when logged in:
+![alt text](images/screenshots/Screenshot_12.png)
+
+Theme switching:
+![alt text](images/screenshots/Screenshot_13.png)
+
+Dialog with chatbot assistant:
+![alt text](images/screenshots/Screenshot_14.png)

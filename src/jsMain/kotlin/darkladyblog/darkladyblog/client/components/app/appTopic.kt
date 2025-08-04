@@ -140,7 +140,14 @@ fun RenderContext.appTopic(
                 }
                 div("tab-pane fade", "topic_comments") {
                     className(if (isTabCommentsActive) "show active" else "")
-                    val listStore = object : RestListStore<ULong, CommentModel, CommentService>(CommentService) {
+                    val listStore = object : RestListStore<ULong, CommentModel, CommentService>(
+                        CommentService,
+                        order = arrayOf(
+                            "updated_at" to "DESC",
+                            "created_at" to "DESC",
+                            "id" to "DESC",
+                        )
+                    ) {
                         override suspend fun countIt(): Long =
                             store.current.id.let { id ->
                                 if (id != null)
@@ -152,9 +159,9 @@ fun RenderContext.appTopic(
                         override suspend fun all(): List<CommentModel>? =
                             store.current.id.let { id ->
                                 if (id != null)
-                                    restService.all(id)
+                                    restService.all(id, order = order)
                                 else
-                                    restService.all()
+                                    restService.all(order = order)
                             }
                     }
                     appComments(pageData, listStore)

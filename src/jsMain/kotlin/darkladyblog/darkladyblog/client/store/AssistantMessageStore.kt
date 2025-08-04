@@ -2,7 +2,7 @@ package darkladyblog.darkladyblog.client.store
 
 import darkladyblog.darkladyblog.client.base.store.RootStoreBase
 import darkladyblog.darkladyblog.client.base.store.RootStoreListBase
-import darkladyblog.darkladyblog.common.config.Config
+import darkladyblog.darkladyblog.common.config.WS_SERVER_ASSISTANT
 import darkladyblog.darkladyblog.common.model.AssistantMessage
 import darkladyblog.darkladyblog.common.model.AssistantMessageType
 import dev.fritz2.core.Handler
@@ -22,7 +22,7 @@ object AssistantMessageStore : RootStoreListBase<AssistantMessage>() {
 
     private lateinit var session: Session
 
-    private val socket: Socket = websocket(Config.WS_SERVER_ASSISTANT)
+    private val socket: Socket = websocket(WS_SERVER_ASSISTANT)
 
     operator fun invoke() {
         session = connect()

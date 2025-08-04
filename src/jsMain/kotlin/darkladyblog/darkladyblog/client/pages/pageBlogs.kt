@@ -9,7 +9,14 @@ import dev.fritz2.core.RenderContext
 
 fun RenderContext.pageBlogs(pageData: PageData) {
     div {
-        val listStore = object : RestListStore<ULong, BlogModel, BlogService>(BlogService) {
+        val listStore = object : RestListStore<ULong, BlogModel, BlogService>(
+            BlogService,
+            order = arrayOf(
+                "updated_at" to "DESC",
+                "created_at" to "DESC",
+                "id" to "DESC",
+            )
+        ) {
             override fun titleArgs(current: List<BlogModel>): List<String>? =
                 listOf()
         }

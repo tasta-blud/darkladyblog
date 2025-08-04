@@ -3,7 +3,8 @@ package darkladyblog.darkladyblog.common.model
 import darkladyblog.darkladyblog.common.util.toRanged
 import dev.fritz2.core.Lenses
 import kotlinx.serialization.Serializable
-import kotlin.math.roundToInt
+import kotlin.math.ceil
+import kotlin.math.floor
 
 @Lenses
 @Serializable
@@ -12,7 +13,7 @@ data class Paginator(val count: Long = 0, val offset: Long = 0, val limit: Int? 
     constructor(count: Long = 0, page: Int = 1, limit: Int? = null) :
             this(
                 count,
-                if (limit == null) 0 else (page.toRanged(1..(count / limit.toDouble()).roundToInt()) - 1) * limit.toLong(),
+                if (limit == null) 0 else (page.toRanged(1..ceil(count / limit.toDouble()).toInt()) - 1) * limit.toLong(),
                 limit
             )
 
@@ -23,10 +24,10 @@ data class Paginator(val count: Long = 0, val offset: Long = 0, val limit: Int? 
             this(count, 1, null)
 
     val pages: Int
-        get() = if (limit == null) 1 else (count / limit.toDouble()).toInt() + 1
+        get() = if (limit == null) 1 else ceil(count / limit.toDouble()).toInt()
 
     val page: Int
-        get() = if (limit == null) 1 else (offset / limit.toDouble()).toInt() + 1
+        get() = if (limit == null) 1 else floor(offset / limit.toDouble()).toInt() + 1
 
     val isFirstPage: Boolean
         get() = page == 1

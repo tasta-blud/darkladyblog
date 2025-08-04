@@ -4,7 +4,7 @@ import darkladyblog.darkladyblog.client.intercept.AuthenticationMiddleware
 import darkladyblog.darkladyblog.client.intercept.CookieStoreMiddleware
 import darkladyblog.darkladyblog.client.intercept.ToastMiddleware
 import darkladyblog.darkladyblog.client.services.Alerts
-import darkladyblog.darkladyblog.common.config.Config
+import darkladyblog.darkladyblog.common.config.SERVER_URL
 import dev.fritz2.remote.Request
 import dev.fritz2.remote.Response
 import dev.fritz2.remote.decoded
@@ -19,7 +19,7 @@ abstract class AbstractHttpService(val path: String, val useCookies: Boolean = t
     val auth: AuthenticationMiddleware by lazy { AuthenticationMiddleware() }
 
     val http: Request
-        get() = http(Config.SERVER_URL).append(path)
+        get() = http(SERVER_URL).append(path)
             .let { if (useCookies) it.useCookies() else it }
             .let { if (useAuth) it.useAuth() else it }
             .credentials(RequestCredentials.SAME_ORIGIN)

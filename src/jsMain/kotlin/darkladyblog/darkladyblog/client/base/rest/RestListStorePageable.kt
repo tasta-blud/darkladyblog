@@ -2,7 +2,7 @@ package darkladyblog.darkladyblog.client.base.rest
 
 import darkladyblog.darkladyblog.client.store.PaginationStore
 import darkladyblog.darkladyblog.common.base.IdModel
-import darkladyblog.darkladyblog.common.config.Config.PAGE_SIZE
+import darkladyblog.darkladyblog.common.config.PAGE_SIZE
 import darkladyblog.darkladyblog.common.model.Paginator
 import dev.fritz2.core.Id
 import kotlinx.coroutines.Job
@@ -13,9 +13,10 @@ open class RestListStorePageable<ID : Any, M : IdModel<ID>, R : RestService<ID, 
     limit: Int? = PAGE_SIZE,
     page: Int = 1,
     initialData: List<M> = listOf<M>(),
+    vararg order: Pair<String, String> = arrayOf("id" to "ASC"),
     job: Job = Job(),
     override val id: String = Id.next()
-) : RestListStore<ID, M, R>(restService, initialData, job, id) {
+) : RestListStore<ID, M, R>(restService, initialData, order = order, job, id) {
 
     val paginationStore: PaginationStore =
         PaginationStore(Paginator(initialData.size.toLong(), limit = limit, page = page))
